@@ -34,19 +34,32 @@ namespace CopyObjectsUI
                     }
                 }
             };
+            // Remember, object variables are just addresses-they're just pointing to a location. So if you just said secondPerson = firstPerson, you're setting the addresses equal to each other, such that if you change secondPerson.FirstName, you're also changing the value of firstPerson.FirstName
 
             // Creates a second PersonModel object
-            PersonModel secondPerson = null;
-
+            /*            PersonModel secondPerson = null;
+            */
             // Set the value of the secondPerson to be a copy of the firstPerson
             // We do this by converting the first person to JSON 
-            string temporaryPerson = JsonConvert.SerializeObject(firstPerson); 
-            // and then deserializing it back into the object, just like we were doing this with APIs.
-            secondPerson = JsonConvert.DeserializeObject<PersonModel>(temporaryPerson);
 
+            /*            string temporaryPerson = JsonConvert.SerializeObject(firstPerson); 
+            */            // and then deserializing it back into the object, just like we were doing this with APIs.
+                          // But if firstPerson had private variables, those would not be copied over to seconPerson.
+            /* secondPerson = JsonConvert.DeserializeObject<PersonModel>(temporaryPerson);
+ */
             // Update the secondPerson's FirstName to "Bob" 
-            // and change the Street Address for each of Bob's addresses
-            // to a different value
+            /*            secondPerson.FirstName = "Bob";
+            */            // and change the Street Address for each of Bob's addresses
+                          // to a different value
+            /*  secondPerson.Addresses[0].StreetAddress = "2601 W. 64th St.";
+              secondPerson.Addresses[1].StreetAddress = "900 E. Main St.";*/
+
+
+
+
+            PersonModel secondPerson = (PersonModel)firstPerson.Clone();
+
+
 
             // Ensure that the following statements are true
             Console.WriteLine($"{ firstPerson.FirstName } != { secondPerson.FirstName }");
@@ -56,15 +69,36 @@ namespace CopyObjectsUI
             Console.WriteLine($"{ firstPerson.Addresses[0].City } == { secondPerson.Addresses[0].City }");
             Console.WriteLine($"{ firstPerson.Addresses[1].StreetAddress } != { secondPerson.Addresses[1].StreetAddress }");
             Console.WriteLine($"{ firstPerson.Addresses[1].City } == { secondPerson.Addresses[1].City }");
+
+            Console.ReadLine(); 
         }
     }
 
-    public class PersonModel
+    public class PersonModel : ICloneable
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public List<AddressModel> Addresses { get; set; } = new List<AddressModel>();
+
+        public object Clone()
+        {
+            PersonModel clone = new PersonModel
+            {
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                DateOfBirth = this.DateOfBirth,
+                Addresses = this.Addresses.Select(a => new AddressModel
+                {
+                    StreetAddress = a.StreetAddress,
+                    City = a.City,
+                    State = a.State,
+                    ZipCode = a.ZipCode
+                }).ToList()
+            };
+
+            return clone;
+        }
     }
 
     public class AddressModel
