@@ -58,8 +58,9 @@ namespace CopyObjectsUI
 
 
             PersonModel secondPerson = (PersonModel)firstPerson.Clone();
-
-
+            secondPerson.FirstName = "Bob";
+            secondPerson.Addresses[0].StreetAddress = "2601 W. 64th St.";
+            secondPerson.Addresses[1].StreetAddress = "900 E. Main St.";
 
             // Ensure that the following statements are true
             Console.WriteLine($"{ firstPerson.FirstName } != { secondPerson.FirstName }");
